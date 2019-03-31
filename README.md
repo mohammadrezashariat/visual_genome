@@ -1,112 +1,108 @@
-# Visual Genome を扱うためのスクリプト
+# Script for working with Visual Genome
 ---
 
-## 概要
+## Overview
 
- * 開発・実行環境:
+ * Development and execution environment:
    * ubuntu 14.04LTS(64 bit)
    * python 3.4.5
 
 
  * Visual Genome:
-     * 公式サイト: [Visual Genome](http://visualgenome.org/)
-     * ダウンロードページ: [Visual Genome Dataset](http://visualgenome.org/api/v0/api_home.html)
+     * Visual Genome:(http://visualgenome.org/)
+     * download page: [Visual Genome Dataset](http://visualgenome.org/api/v0/api_home.html)
 
-     * 今回使用するデータセット:
+     * Dataset to be used:
        * [Download images part1(9.2GB)](https://cs.stanford.edu/people/rak248/VG_100K_2/images.zip)
        * [Download images part2(5.47GB)](https://cs.stanford.edu/people/rak248/VG_100K_2/images2.zip)
        * [Download objects(413.87)](http://visualgenome.org/static/data/dataset/objects.json.zip)
 
 
- * スクリプト:
+ * script:
    * extract_contents.py
-     * 画像内の物体を表す語(synsets)を, 出現頻度順にソートするスクリプト.
-     * 画像に含まれる物体の種類の確認に使用.  
+     * A script that sorts words (synsets) representing objects in an image in order of appearance frequency
+     * Used to confirm the type of object included in the image.  
 
    * extract_image.py
-     * 画像内の物体を表す語(synsets)から, その物体を含む画像のリストを出力するスクリプト
-     * 画像の抽出に使用
+     * A script that outputs a list of images containing an object from the words (synsets) representing the object in the image
+     * Used for image extraction
 
    * extract_bbox_by_image_list.py
-     * 画像内の物体を表す語(synsets)から, その物体が位置する範囲(Bounding Box; bbox)を抽出するスクリプト
-     * 物体の位置抽出に使用(x, y, width, height)
+     * Script that extracts the bounding box (bbox) in which the object is located from the words (synsets) that represent the object in        the image
+     * Used for object position extraction (x, y, width, height)
 
    * extract_bbox_to_normalize.py
-     * 画像内の物体を表す語(synsets)から, その物体が位置する範囲(Bounding Box; bbox)を画像の縦横のサイズで正規化(0~1で表現)して抽出するスクリプト
-     * 物体の位置抽出に使用(x, y, width, height)
+     * A script that extracts the range (Bounding Box; bbox) in which the object is located from the words (synsets) representing the          object in the image by normalizing (represented by 0 to 1) the vertical and horizontal sizes of the image
+     * Used for object position extraction (x, y, width, height)
 
 
-## 実行手順
+## Execution procedure
 
- 1. データセットとスクリプトをダウンロード
-   * 上記のデータセットのリンクからダウンロードする.
-   * **以下では, 次のディレクトリ構造を前提とする.**
+ 1. Download datasets and scripts
+   * Download from the data set link above.
+   * **n the following, we assume the following directory structure.**
    ```
-     visual_genome (フォルダ)
-       |- images (フォルダ; ダウンロードしたpart1とpart2を統合したもの. 自分で作成する)
-       |- scripts (フォルダ; 本スクリプト群を格納する)
-       |- objects.json (ファイル)
+     visual_genome (folder)
+       |- images (Folder; integrated downloaded part1 and part2. Create your own)
+       |- scripts (Folder; store this script group)
+       |- objects.json (File)
    ```
 
- 2. scriptsフォルダへ移動
+ 2. Move to scripts folder
    ```
      cd scripts
    ```
 
- 3. スクリプト実行
-   * synsetsの種類の確認のため, extract_contents.pyを実行
+ 3. cript execution
+   * Run extract_contents.py to check the type of synsets
      ```
        python extract_contents.py
      ```
 
-     * 実行結果として, ./results/contents.csvが生成されていることを確認する.
+     * Check that ./results/contents.csv is generated as the execution result.
        ```
          less ./results/contents.csv
        ```
-     * synsetsは, ファイルの第1列(name列)に記載されている文字列である.
+     * synsets is a string described in the first column (name column) of the file.
 
-   * お気に入りのsynsetsを見つけたら, それを含む画像を抽出するために,  
-     extract_image.pyを実行
+   * If you find your favorite synsets, to extract the image that contains it, 69  Execute extract_image.py
 
-     * synsetsとして, "clock.n.01"を指定して"100"枚抽出する場合,
+     * When extracting "100" sheets by specifying "clock.n.01" as synsets,
        ```
          python extract_image.py -t clock.n.01 -n 100
        ```
 
-       * 実行結果として, ./results/image_list.txtが生成されていることを確認する.
+       * heck that ./results/image_list.txt is generated as the execution result.
        ```
          less ./results/image_list.txt
        ```
 
-   * synsetsと, それを含む画像から位置情報(Bounding Box)を抽出したい場合は,  
-     extract_bbox_by_image_list.pyを実行
+   * If you want to extract location information (Bounding Box) from synsets and images that contain 81  Run                e                xtract_bbox_by_image_list.py
 
-     * synsetsとして, "clock.n.01", 画像リストとして, "./results/image_list.txt"を指定する場合,
+     * When "clock.n.01" is specified as synsets and "./results/image_list.txt" is specified as an image list, 83,
        ```
          python extract_bbox_by_image_list.py -s clock.n.01 -i ./results/image_list.txt
        ```
 
-       * 実行結果として./out/以下にファイルが生成されていることを確認する.
+       * Check that the file is generated under ./out/ as the execution result.
        ```
          ls ./out/
        ```
 
-   * Bounding Boxについて正規化したバージョンが良い場合は,  
-     extract_bbox_to_normalize.pyを実行
-
-     * synsetsとして, "clock.n.01", 画像リストとして, "./results/image_list.txt"を指定する場合,
+   * If the normalized version of the Bounding Box is good, 93  Run extract_bbox_to_normalize.py
+     * When "clock.n.01" is specified as synsets and "./results/image_list.txt" is specified as an image list,
        ```
          python extract_bbox_to_normalize.py -s clock.n.01 -i ./results/image_list.txt
        ```
 
-　* 上記の方法以外にオプションを指定できる場合があるため, 詳細は各スクリプトの上部のコメントを参照すること
+　* Refer to the comments at the top of each script for details, as options may be specified in addition to the above method.
 
 
-## おすすめの活用方法
- * **以下では, scriptsの親ディレクトリ(visual_genome)からのコマンドを前提とする.**
+## Recommended usage method
+ * **The following assumes commands from the parent directory of scripts (visual_genome).**
 
- * extract_image.pyの実行結果の画像リスト(./scripts/results/image_list.txt)から特定の画像をディレクトリに集める.
-   * image_partフォルダを作って, その中に集める場合,
+ * Gathers specific images from the image list (./scripts/results/image_list.txt) of the execution results of extract_image.py to a        directory.
+   * Create an image_part folder and collect it in it
    ```
      mkdir image_part
      cat ./scripts/results/image_list.txt | xargs -I{} cp ./images/{} ./image_part/
